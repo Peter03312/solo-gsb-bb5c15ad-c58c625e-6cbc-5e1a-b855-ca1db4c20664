@@ -425,12 +425,14 @@ form.addEventListener('submit', async (event) => {
       markSizeMm: productionMarksBox.checked && markSizeInput.value.trim() !== ''
         ? Number(markSizeInput.value)
         : undefined,
-      // 印刷备料：仅勾选时上送；过程损耗率百分数换算为小数（3% -> 0.03）
+      // 印刷备料：仅勾选时上送；过程损耗率按百分数文本精确换算为小数字符串
+      // （0.9% -> "0.009"，禁止 Number()/100 的浮点除法产生 0.009000000000000001），
+      // 由服务端按十进制字面值做有理数精确计算；非法输入在此抛出可读提示。
       materialPrep: materialPrepBox.checked
         ? {
             copies: Number(prepCopiesInput.value),
             makereadySheets: Number(prepMakereadyInput.value),
-            processWasteRate: Number(prepWasteRateInput.value) / 100,
+            processWasteRate: convertPercentToDecimalText(prepWasteRateInput.value),
             sheetsPerPack: Number(prepSheetsPerPackInput.value),
           }
         : undefined,

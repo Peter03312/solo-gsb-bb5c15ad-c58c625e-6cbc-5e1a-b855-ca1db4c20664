@@ -112,8 +112,8 @@
         <input id="prepMakeready" type="number" min="0" max="1000000" step="1" value="10" disabled>
       </div>
       <div class="field">
-        <label for="prepWasteRate">过程损耗率（%）</label>
-        <input id="prepWasteRate" type="number" min="0" max="99.999" step="0.1" value="3" disabled>
+        <label for="prepWasteRate">过程损耗率（%，0 ~ 99.999，最多三位小数）</label>
+        <input id="prepWasteRate" type="number" min="0" max="99.999" step="0.001" value="3" disabled>
       </div>
       <div class="field">
         <label for="prepSheetsPerPack">每包张数</label>
@@ -221,9 +221,10 @@
       做同一物理位置的坐标变换，保证正背套准。画布按纸张 mm 等比绘制，省略的标记逐张列出原因，导出 JSON 含每个标记的坐标与原因。
     </p>
     <p class="hint">
-      印刷备料（可选）：勾选并填写成品份数、每帖开机损耗张数、过程损耗率（%）与每包张数后，系统按拼版结果<strong>各帖实际张数</strong>
+      印刷备料（可选）：勾选并填写成品份数、每帖开机损耗张数、过程损耗率（%，0 ~ 99.999，最多三位小数）与每包张数后，系统按拼版结果<strong>各帖实际张数</strong>
       逐帖计算——净用纸 = 每帖实际张数 × 成品份数；<strong>需领纸 = ceil((净用纸 + 开机损耗) / (1 − 过程损耗率))</strong>，
       各帖<strong>分别向上取整</strong>后再汇总（禁止先合并各帖再算损耗）；汇总后的需领纸合计按每包张数<strong>向上取整</strong>得到整包采购量。
+      百分数按输入的十进制文本精确换算（如 0.9% 精确换算为 0.009，不做浮点除法），非法值（留空、非数字、超过三位小数或超出 0 ~ 99.999）会在提交时给出明确提示。
       结果区逐帖展示净用纸、开机损耗、过程损耗与需领纸，并给出整包采购汇总；导出的拼版清单 JSON 在 <code>materialPrep</code> 段附带相同数据。
       不勾选时不进行任何备料计算，响应与之前完全一致。
     </p>
@@ -436,6 +437,7 @@
   </section>
 
   <footer>骑马钉拼版预演 · Node.js + Express + 原生 Canvas</footer>
+  <script src="percent.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
